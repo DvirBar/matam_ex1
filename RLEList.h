@@ -140,7 +140,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result);
 *               This function replaces each character of the give RLE list with its mapped character.
 *
 * @param list - The RLE list to edit.
-* @param MapFunction - Pointer to a function of type MapFunction. 
+* @param map_function - Pointer to a function of type MapFunction.
 * @return
 * 	RLE_LIST_NULL_ARGUMENT if a NULL was sent as a paramater.
 * 	LIST_SUCCESS if the mapping is done successfully.
