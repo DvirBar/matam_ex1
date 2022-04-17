@@ -179,6 +179,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
     }
 
     RLEList temporaryList = list;
+    
     while(temporaryList) {
         exportedString[i] = temporaryList->value;
         i++;
