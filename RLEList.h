@@ -47,7 +47,6 @@ typedef enum {
  */
 typedef char (*MapFunction)(char);
 
-
 /**
 * RLEListCreate: Allocates a new empty RLE list.
 *

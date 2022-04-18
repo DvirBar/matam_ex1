@@ -7,7 +7,18 @@ struct RLEList_t {
     struct RLEList_t* next;
 };
 
-static int RLEListNodeNumber(RLEList list);
+static int RLEListNodeNumber(RLEList list) {
+    int nodesInList = 0;
+    RLEList temporaryList = list;
+
+    while(temporaryList) {
+        nodesInList++;
+        temporaryList = temporaryList->next;
+    }
+
+    return nodesInList;
+}
+
 
 RLEList RLEListCreate() {
     RLEList list = malloc(sizeof(*list));
@@ -20,11 +31,6 @@ RLEList RLEListCreate() {
 }
 
 void RLEListDestroy(RLEList list) {
-
-    if (list == NULL) {
-        return;
-    }
-
     RLEList currentNodeToDestroy;
 
     while(list) {
@@ -65,15 +71,16 @@ RLEListResult RLEListAppend(RLEList list, char value) {
 }
 
 int RLEListSize(RLEList list) {
-    if(list == NULL)
+    if(list == NULL) {
         return -1;
-
-    RLEList temporaryList = list;
+    }
+        
+    RLEList tempList = list;
     int listCharacterNumber = 0;
 
-    while (temporaryList) {
-        listCharacterNumber += temporaryList->num;
-        temporaryList = temporaryList->next;
+    while (tempList) {
+        listCharacterNumber += tempList->num;
+        tempList = tempList->next;
     }
 
     return listCharacterNumber;
@@ -114,11 +121,11 @@ RLEListResult RLEListRemove(RLEList list, int index) {
 }
 
 char RLEListGet(RLEList list, int index, RLEListResult *result) {
-
     if(list == NULL) {
         if(result != NULL) {
             *result = RLE_LIST_NULL_ARGUMENT;
         }
+        
         return 0;
     }
 
@@ -130,17 +137,18 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
         return 0;
     }
 
-    RLEList temporaryList = list;
-
-    for (int i = 0; i + temporaryList->num <= index; i += temporaryList->num) {
-        temporaryList = temporaryList->next;
+    RLEList tempList = list;
+    
+    // TODO: Maybe we should use a fucntion to replace these loops?
+    for (int i = 0; i + tempList->num <= index; i += tempList->num) {
+        tempList = tempList->next;
     }
 
     if(result != NULL) {
         *result = RLE_LIST_SUCCESS;
     }
 
-    return temporaryList->value;
+    return tempList->value;
 }
 
 RLEListResult RLEListMap(RLEList list, MapFunction map_function) {
@@ -165,15 +173,16 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         }
         return NULL;
     }
-
+    
     int nodesInList = RLEListNodeNumber(list);
     int stringIndex = 0;
 
+    // TODO: Should we malloc here? when will we free this?
     char* exportedString = (char*) malloc(sizeof(char) * ((nodesInList * 3) + 1));
 
     if(exportedString == NULL) {
         if (result != NULL) {
-            *result = RLE_LIST_OUT_OF_MEMORY;
+            *result = RLE_LIST_OUT_OF_MEMORY; // TODO: I think we should use LIST_ERROR_RLE
         }
         return NULL;
     }
@@ -181,12 +190,12 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
     RLEList temporaryList = list;
     
     while(temporaryList) {
-        exportedString[i] = temporaryList->value;
-        i++;
-        exportedString[i] = temporaryList->num;
-        i++;
-        exportedString[i] = '\n';
-        i++;
+        exportedString[stringIndex] = temporaryList->value;
+        stringIndex++;
+        exportedString[stringIndex] = temporaryList->num;
+        stringIndex++;
+        exportedString[stringIndex] = '\n';
+        stringIndex++;
         temporaryList = temporaryList->next;
     }
 
@@ -197,14 +206,3 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
     return exportedString;
 }
 
-static int RLEListNodeNumber(RLEList list) {
-    int nodesInList = 0;
-    RLEList temporaryList = list;
-
-    while(temporaryList) {
-        nodesInList++;
-        temporaryList = temporaryList->next;
-    }
-
-    return nodesInList;
-}
