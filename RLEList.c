@@ -1,5 +1,8 @@
 #include "RLEList.h"
-#include "stdlib.h"
+#include <stdlib.h> // TODO: Verify this
+
+#define UNDEFINED -1
+#define STR_FORMAT_BASE_LEN 2
 
 struct RLEList_t {
     char value;
@@ -19,6 +22,18 @@ static int RLEListNodeNumber(RLEList list) {
     return nodesInList;
 }
 
+static int getNumDigits(int num) {
+    int counter = 1;
+    int base = 10;
+    
+    while(num/base) {
+        counter++;
+        base*=base;
+    }
+    
+    return counter;
+}
+ 
 
 RLEList RLEListCreate() {
     RLEList list = malloc(sizeof(*list));
@@ -26,6 +41,10 @@ RLEList RLEListCreate() {
     if(list == NULL) {
         return NULL;
     }
+    
+    list->value = 0;
+    list->num = 0;
+    list->next = NULL;
     
     return list;
 }
@@ -72,7 +91,7 @@ RLEListResult RLEListAppend(RLEList list, char value) {
 
 int RLEListSize(RLEList list) {
     if(list == NULL) {
-        return -1;
+        return UNDEFINED;
     }
         
     RLEList tempList = list;
@@ -139,7 +158,7 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
 
     RLEList tempList = list;
     
-    // TODO: Maybe we should use a fucntion to replace these loops?
+   
     for (int i = 0; i + tempList->num <= index; i += tempList->num) {
         tempList = tempList->next;
     }
@@ -177,26 +196,25 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
     int nodesInList = RLEListNodeNumber(list);
     int stringIndex = 0;
 
-    // TODO: Should we malloc here? when will we free this?
-    char* exportedString = (char*) malloc(sizeof(char) * ((nodesInList * 3) + 1));
+    char* exportedString = malloc((nodesInList * STR_FORMAT_BASE_LEN) + 1);
 
     if(exportedString == NULL) {
         if (result != NULL) {
-            *result = RLE_LIST_OUT_OF_MEMORY; // TODO: I think we should use LIST_ERROR_RLE
+            *result = RLE_LIST_OUT_OF_MEMORY;
         }
         return NULL;
     }
 
-    RLEList temporaryList = list;
+    RLEList tempList = list;
     
-    while(temporaryList) {
-        exportedString[stringIndex] = temporaryList->value;
+    while(tempList) {
+        exportedString[stringIndex] = tempList->value;
         stringIndex++;
-        exportedString[stringIndex] = temporaryList->num;
+        exportedString[stringIndex] = tempList->num;
         stringIndex++;
         exportedString[stringIndex] = '\n';
         stringIndex++;
-        temporaryList = temporaryList->next;
+        tempList = tempList->next;
     }
 
     if (result != NULL) {
