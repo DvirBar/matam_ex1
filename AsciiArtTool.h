@@ -10,9 +10,23 @@
 
 #include "RLEList.h"
 
-// TODO: Add description
+/**
+ * asciiArtEncoded: Compresses an image file to an RLEList
+ *
+ * @param in_stream - the file containing the uncompressed image
+ * @return
+ *      RLE List that contains the compressed image
+ */
 RLEList asciiArtRead(FILE* in_stream);
 
+/**
+ * asciiArtPrint: Decompresses an image file contained in a RLE List to an output file.
+ * @param list - The RLE list containing the compressed image.
+ * @param out_stream - The output file containing the uncompressed image.
+ * @return
+ *    RLE_LIST_NULL_ARGUMENT if a NULL was sent as one of the parameters to inner functions
+ *    RLE_LIST_SUCCESS if the image has been decompressed successfully
+ */
 RLEListResult asciiArtPrint(RLEList list, FILE *out_stream);
 
 /**

@@ -1,5 +1,6 @@
 #include "RLEList.h"
-#include <stdlib.h> // TODO: Verify this
+#include <stdlib.h>
+#include <string.h>
 
 #define UNDEFINED -1
 #define STR_FORMAT_BASE_LEN 2
@@ -33,7 +34,32 @@ static int getNumDigits(int num) {
     
     return counter;
 }
- 
+
+static int getRLEStringLength(RLEList list) {
+    int RLEStrLength = (RLEListNodeNumber(list) * STR_FORMAT_BASE_LEN);
+    RLEList tmpList = list;
+    while (tmpList) {
+        RLEStrLength += getNumDigits(tmpList->num);
+        tmpList = tmpList->next;
+    }
+    return RLEStrLength;
+}
+
+static void RLENodeToString(RLEList list, char* outputStr) {
+    int nodeNumOfDigits = getNumDigits(list->num);
+    int strSize = nodeNumOfDigits + STR_FORMAT_BASE_LEN;
+    outputStr[0] = list->value;
+    outputStr[strSize - 1] = '\n';
+    outputStr[strSize] = '\0';
+    int nodeCurrentDigit = list->num;
+
+    for (int i = 1; i <= nodeNumOfDigits; i++)
+    {
+        outputStr[strSize - 1 - i] = (nodeCurrentDigit % 10) + '0';
+        nodeCurrentDigit /= 10;
+    }
+}
+
 
 RLEList RLEListCreate() {
     RLEList list = malloc(sizeof(*list));
@@ -192,11 +218,8 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         }
         return NULL;
     }
-    
-    int nodesInList = RLEListNodeNumber(list);
-    int stringIndex = 0;
 
-    char* exportedString = malloc((nodesInList * STR_FORMAT_BASE_LEN) + 1);
+    char* exportedString = malloc((getRLEStringLength(list)) + 1);
 
     if(exportedString == NULL) {
         if (result != NULL) {
@@ -205,15 +228,21 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         return NULL;
     }
 
+    exportedString = strcpy(exportedString, "");
+
     RLEList tempList = list;
-    
+
     while(tempList) {
-        exportedString[stringIndex] = tempList->value;
-        stringIndex++;
-        exportedString[stringIndex] = tempList->num;
-        stringIndex++;
-        exportedString[stringIndex] = '\n';
-        stringIndex++;
+        char* currentNode = malloc(getNumDigits(tempList->num) + STR_FORMAT_BASE_LEN + 1);
+        if(currentNode == NULL) {
+            if (result != NULL) {
+                *result = RLE_LIST_OUT_OF_MEMORY;
+            }
+            return NULL;
+        }
+        RLENodeToString(tempList, currentNode);
+        exportedString = strcat(exportedString, currentNode);
+        free(currentNode);
         tempList = tempList->next;
     }
 
@@ -223,4 +252,3 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
 
     return exportedString;
 }
-
