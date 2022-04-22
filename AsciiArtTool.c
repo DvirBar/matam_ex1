@@ -5,22 +5,26 @@
 #include "AsciiArtTool.h"
 
 RLEList asciiArtRead(FILE* in_stream) {
-    assert(in_stream);
+    if(!in_stream) {
+        return NULL;
+    }
+    
     RLEList compressedFile = RLEListCreate();
     char currentFileChar = 0;
     while(fscanf(in_stream, "%c", &currentFileChar) != EOF) {
         RLEListAppend(compressedFile, currentFileChar);
     }
+    
     return compressedFile;
 }
 
 RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
-    assert(out_stream);
-    RLEListResult result = RLE_LIST_SUCCESS;
-    if(list == NULL) {
-        result = RLE_LIST_NULL_ARGUMENT;
-        return result;
+    if(!list || !out_stream) {
+        return RLE_LIST_NULL_ARGUMENT;
     }
+    
+    RLEListResult result = RLE_LIST_SUCCESS;
+   
     int decompressedStrLen = RLEListSize(list);
     char* decompressedStr = malloc(decompressedStrLen + 1);
 
@@ -43,6 +47,10 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
 }
 
 RLEListResult asciiArtPrintEncoded(RLEList list, FILE *out_stream) {
+    if(!list || !out_stream) {
+        return RLE_LIST_NULL_ARGUMENT;
+    }
+    
     RLEListResult result = RLE_LIST_SUCCESS;
     char* encodedStr = RLEListExportToString(list, &result);
     fprintf(out_stream, encodedStr);

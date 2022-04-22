@@ -232,7 +232,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
 
     RLEList tempList = list;
 
-    while(tempList) {
+    while(tempList) { 
         char* currentNode = malloc(getNumDigits(tempList->num) + STR_FORMAT_BASE_LEN + 1);
         if(currentNode == NULL) {
             if (result != NULL) {

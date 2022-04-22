@@ -2,6 +2,7 @@
 #include "RLEList.h"
 #include "AsciiArtTool.h"
 
+#define FLAG_DASH '-'
 #define ENCODED_FLAG 'e'
 #define INVERTED_FLAG 'i'
 
@@ -13,7 +14,7 @@ int main(int argc, char** argv) {
     
     char flag = argv[0][1];
     
-    if(argv[0][0] != '-' || flag != ENCODED_FLAG || flag != INVERTED_FLAG) {
+    if(argv[0][0] != FLAG_DASH || flag != ENCODED_FLAG || flag != INVERTED_FLAG) {
         return 0;
     }
     
@@ -38,7 +39,6 @@ int main(int argc, char** argv) {
         result = asciiArtPrint(list, target);
     }
     
-    // TODO: Should we destroy it here?
     RLEListDestroy(list);
     
     fclose(source);

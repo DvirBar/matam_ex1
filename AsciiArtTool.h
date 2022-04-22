@@ -11,7 +11,7 @@
 #include "RLEList.h"
 
 /**
- * asciiArtEncoded: Compresses an image file to an RLEList
+ * asciiArtEncoded: Compresses an image file to an RLEList.
  *
  * @param in_stream - the file containing the uncompressed image
  * @return
