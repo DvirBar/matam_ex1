@@ -41,7 +41,7 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
             return result;
         }
     }
-    fprintf(out_stream, decompressedStr);
+    fprintf(out_stream, "%s", decompressedStr);
     free(decompressedStr);
     return result;
 }
@@ -53,7 +53,7 @@ RLEListResult asciiArtPrintEncoded(RLEList list, FILE *out_stream) {
     
     RLEListResult result = RLE_LIST_SUCCESS;
     char* encodedStr = RLEListExportToString(list, &result);
-    fprintf(out_stream, encodedStr);
+    fprintf(out_stream, "%s", encodedStr);
     free(encodedStr);
     return result;
 }

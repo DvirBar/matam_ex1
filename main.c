@@ -5,25 +5,27 @@
 #define FLAG_DASH '-'
 #define ENCODED_FLAG 'e'
 #define INVERTED_FLAG 'i'
+#define EXPECTED_ARGS 3
 
 int main(int argc, char** argv) {
-    if(argc != 3) {
+    if(argc != EXPECTED_ARGS+1) {
         // TODO: Should we raise another error here?
         return 0;
     }
     
-    char flag = argv[0][1];
+    char flag = argv[1][1];
     
-    if(argv[0][0] != FLAG_DASH || flag != ENCODED_FLAG || flag != INVERTED_FLAG) {
+    if(argv[1][0] != FLAG_DASH || (flag != ENCODED_FLAG && flag != INVERTED_FLAG)) {
+        
         return 0;
     }
     
-    FILE* source = fopen(argv[1], "r");
+    FILE* source = fopen(argv[2], "r");
     if(!source) {
         return 0;
     }
     
-    FILE* target = fopen(argv[2], "w");
+    FILE* target = fopen(argv[3], "w");
     if(!target) {
         fclose(source);
         return 0;
