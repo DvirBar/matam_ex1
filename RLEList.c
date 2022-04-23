@@ -4,6 +4,8 @@
 
 #define UNDEFINED -1
 #define STR_FORMAT_BASE_LEN 2
+#define NEW_LINE_ASCII '\n'
+#define ZERO_ASCII '0'
 
 struct RLEList_t {
     char value;
@@ -49,13 +51,12 @@ static void RLENodeToString(RLEList list, char* outputStr) {
     int nodeNumOfDigits = getNumDigits(list->num);
     int strSize = nodeNumOfDigits + STR_FORMAT_BASE_LEN;
     outputStr[0] = list->value;
-    outputStr[strSize - 1] = '\n';
-    outputStr[strSize] = '\0';
+    outputStr[strSize - 1] = NEW_LINE_ASCII;
     int nodeCurrentDigit = list->num;
 
     for (int i = 1; i <= nodeNumOfDigits; i++)
     {
-        outputStr[strSize - 1 - i] = (nodeCurrentDigit % 10) + '0';
+        outputStr[strSize - 1 - i] = (nodeCurrentDigit % 10) + ZERO_ASCII;
         nodeCurrentDigit /= 10;
     }
 }
@@ -229,20 +230,13 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
     }
 
     exportedString = strcpy(exportedString, "");
+    char* tmpStr = exportedString;
 
     RLEList tempList = list;
 
-    while(tempList) { 
-        char* currentNode = malloc(getNumDigits(tempList->num) + STR_FORMAT_BASE_LEN + 1);
-        if(currentNode == NULL) {
-            if (result != NULL) {
-                *result = RLE_LIST_OUT_OF_MEMORY;
-            }
-            return NULL;
-        }
-        RLENodeToString(tempList, currentNode);
-        exportedString = strcat(exportedString, currentNode);
-        free(currentNode);
+    while(tempList) {
+        RLENodeToString(tempList, tmpStr);
+        tmpStr += getNumDigits(tempList->num) + STR_FORMAT_BASE_LEN;
         tempList = tempList->next;
     }
 
