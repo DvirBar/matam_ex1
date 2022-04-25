@@ -91,15 +91,15 @@ RLEListResult RLEListAppend(RLEList list, char value) {
         return RLE_LIST_NULL_ARGUMENT;
     }
     
-    RLEList ptr = list;
+    RLEList tempList = list;
     
-    while(ptr->next) {
-        ptr = ptr->next;
+    while(tempList->next) {
+        tempList = tempList->next;
     }
     
-    if(!ptr->value || ptr->value == value) {
-        ptr->value = value;
-        ptr->num++;
+    if(!tempList->value || tempList->value == value) {
+        tempList->value = value;
+        tempList->num++;
         return RLE_LIST_SUCCESS;
     }
     
@@ -112,8 +112,8 @@ RLEListResult RLEListAppend(RLEList list, char value) {
     newList->value = value;
     newList->num = 1;
     newList->next = NULL;
-    ptr->next = newList;
-    ptr = list;
+    tempList->next = newList;
+    tempList = list;
     
     return RLE_LIST_SUCCESS;
 }
@@ -146,23 +146,25 @@ RLEListResult RLEListRemove(RLEList list, int index) {
     }
     
     RLEList lastNode = NULL;
-    RLEList ptr = list->next;
+    RLEList tempList = list->next;
     
-    for(int i = 0; i + list->num <= index; i += list->num) {
-        lastNode = ptr;
-        ptr = ptr->next;
+    int lastNum = 0;
+    for (int i = 0; i + tempList->num <= index; i += lastNum) {
+        lastNode = tempList;
+        lastNum = tempList->num;
+        tempList = tempList->next;
     }
     
-    if(ptr->num == 1) {
+    if(tempList->num == 1) {
         if(lastNode) {
-            lastNode->next = ptr->next;
+            lastNode->next = tempList->next;
         }
         
-        free(ptr);
+        free(tempList);
     }
     
     else {
-        ptr->num--;
+        tempList->num--;
     }
     
     return RLE_LIST_SUCCESS;
@@ -186,11 +188,12 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
     }
 
     RLEList tempList = list;
-    
-    for (int i = 0; i + tempList->num <= index-2; i += tempList->num) {
+    int lastNum = 0;
+    for (int i = 0; i + tempList->num <= index; i += lastNum) {
+        lastNum = tempList->num;
         tempList = tempList->next;
     }
-
+    
     if(result) {
         *result = RLE_LIST_SUCCESS;
     }
@@ -203,11 +206,11 @@ RLEListResult RLEListMap(RLEList list, MapFunction map_function) {
         return RLE_LIST_NULL_ARGUMENT;
     }
     
-    RLEList ptr = list;
+    RLEList tempList = list;
     
-    while(ptr) {
-        ptr->value = map_function(ptr->value);
-        ptr = ptr->next;
+    while(tempList) {
+        tempList->value = map_function(tempList->value);
+        tempList = tempList->next;
     }
     
     return RLE_LIST_SUCCESS;

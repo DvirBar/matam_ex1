@@ -37,7 +37,6 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
 
 //    decompressedStr[decompressedStrLen] = '\0';
 //
-    printf("%d", decompressedStrLen);
     for(int i = 0; i < decompressedStrLen; i++) {
         decompressedStr[i] = RLEListGet(list, i, &result);
         if(!decompressedStr[i]) {
