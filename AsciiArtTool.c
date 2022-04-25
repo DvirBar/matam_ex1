@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+
 #include "RLEList.h"
 #include "AsciiArtTool.h"
 
@@ -11,10 +12,11 @@ RLEList asciiArtRead(FILE* in_stream) {
     
     RLEList compressedFile = RLEListCreate();
     char currentFileChar = 0;
+    // TODO: What if it fails?
     while(fscanf(in_stream, "%c", &currentFileChar) != EOF) {
         RLEListAppend(compressedFile, currentFileChar);
     }
-    
+
     return compressedFile;
 }
 
@@ -33,14 +35,16 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
         return result;
     }
 
-    decompressedStr[decompressedStrLen] = '\0';
-
+//    decompressedStr[decompressedStrLen] = '\0';
+//
+    printf("%d", decompressedStrLen);
     for(int i = 0; i < decompressedStrLen; i++) {
         decompressedStr[i] = RLEListGet(list, i, &result);
-        if(decompressedStr[i] == 0) {
+        if(!decompressedStr[i]) {
             return result;
         }
     }
+    
     fprintf(out_stream, "%s", decompressedStr);
     free(decompressedStr);
     return result;

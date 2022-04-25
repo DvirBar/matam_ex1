@@ -64,7 +64,7 @@ static void RLENodeToString(RLEList list, char* outputStr) {
 
 RLEList RLEListCreate() {
     RLEList list = malloc(sizeof(*list));
-
+    
     if(list == NULL) {
         return NULL;
     }
@@ -91,19 +91,20 @@ RLEListResult RLEListAppend(RLEList list, char value) {
         return RLE_LIST_NULL_ARGUMENT;
     }
     
-    RLEList ptr = list->next;
+    RLEList ptr = list;
     
-    while(ptr) {
+    while(ptr->next) {
         ptr = ptr->next;
     }
     
-    if(!list->value || list->value == value) {
-        list->num++;
+    if(!ptr->value || ptr->value == value) {
+        ptr->value = value;
+        ptr->num++;
         return RLE_LIST_SUCCESS;
     }
     
     RLEList newList = RLEListCreate();
-    
+
     if(!newList) {
         return RLE_LIST_OUT_OF_MEMORY;
     }
@@ -111,7 +112,8 @@ RLEListResult RLEListAppend(RLEList list, char value) {
     newList->value = value;
     newList->num = 1;
     newList->next = NULL;
-    list->next = newList;
+    ptr->next = newList;
+    ptr = list;
     
     return RLE_LIST_SUCCESS;
 }
@@ -185,8 +187,7 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
 
     RLEList tempList = list;
     
-   
-    for (int i = 0; i + tempList->num <= index; i += tempList->num) {
+    for (int i = 0; i + tempList->num <= index-2; i += tempList->num) {
         tempList = tempList->next;
     }
 
