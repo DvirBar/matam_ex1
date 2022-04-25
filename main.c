@@ -6,6 +6,16 @@
 #define ENCODED_FLAG 'e'
 #define INVERTED_FLAG 'i'
 #define EXPECTED_ARGS 3
+#define AT '@'
+#define SPACE ' '
+
+char mapSpaceToAt(char value) {
+    if(value == SPACE) {
+        return AT;
+    }
+    
+    return value;
+}
 
 int main(int argc, char** argv) {
     if(argc != EXPECTED_ARGS+1) {
@@ -37,7 +47,12 @@ int main(int argc, char** argv) {
         result = asciiArtPrintEncoded(list, target);
     }
     else {
-        result = asciiArtPrint(list, target);
+        result = RLEListMap(list, mapSpaceToAt);
+        
+        if(result == RLE_LIST_SUCCESS) {
+            result = asciiArtPrint(list, target);
+        }
+        
     }
 
     RLEListDestroy(list);
