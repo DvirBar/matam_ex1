@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "RLEList.h"
 #include "AsciiArtTool.h"
@@ -33,7 +34,8 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
    
     int decompressedStrLen = RLEListSize(list);
     char* decompressedStr = malloc(decompressedStrLen + 1);
-
+    strcpy(decompressedStr, "");
+    
     if(decompressedStr == NULL) {
         result = RLE_LIST_NULL_ARGUMENT;
         return result;
