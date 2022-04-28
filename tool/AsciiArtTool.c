@@ -16,7 +16,7 @@ RLEList asciiArtRead(FILE* in_stream) {
 
     while(currentFileChar != EOF) {
         currentFileChar = fgetc(in_stream);
-        if(currentFileChar > EOF) {
+        if(currentFileChar != EOF) {
             RLEListAppend(compressedFile, currentFileChar);
         }
     }

@@ -78,7 +78,6 @@ RLEList RLEListCreate() {
 
 void RLEListDestroy(RLEList list) {
     RLEList currentNodeToDestroy;
-
     while(list) {
         currentNodeToDestroy = list;
         list = list->next;
@@ -113,7 +112,6 @@ RLEListResult RLEListAppend(RLEList list, char value) {
     newList->num = 1;
     newList->next = NULL;
     tempList->next = newList;
-    tempList = list;
     
     return RLE_LIST_SUCCESS;
 }
@@ -137,16 +135,16 @@ int RLEListSize(RLEList list) {
 
 
 RLEListResult RLEListRemove(RLEList list, int index) {
-    if(!list || !index) {
+    if(!list) {
         return RLE_LIST_NULL_ARGUMENT;
     }
-
+    
     if(index < 0 || index >= RLEListSize(list)) {
         return RLE_LIST_INDEX_OUT_OF_BOUNDS;
     }
     
-    RLEList lastNode = NULL;
-    RLEList tempList = list->next;
+    RLEList lastNode = list;
+    RLEList tempList = list;
     
     int lastNum = 0;
     for (int i = 0; i + tempList->num <= index; i += lastNum) {
@@ -156,13 +154,17 @@ RLEListResult RLEListRemove(RLEList list, int index) {
     }
     
     if(tempList->num == 1) {
-        if(lastNode) {
+        if(index==0) {
+            if(list->next) {
+                list = list->next;
+            }
+        }
+        else if(lastNode->next) {
             lastNode->next = tempList->next;
         }
         
         free(tempList);
     }
-    
     else {
         tempList->num--;
     }
