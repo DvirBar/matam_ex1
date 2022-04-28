@@ -33,27 +33,34 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
     RLEListResult result = RLE_LIST_SUCCESS;
    
     int decompressedStrLen = RLEListSize(list);
-    char* decompressedStr = malloc(decompressedStrLen + 1);
-    
-    
-    for(int i=0; i<decompressedStrLen; i++) {
-        decompressedStr[i] = 0;
-    }
-    
-    if(decompressedStr == NULL) {
-        result = RLE_LIST_NULL_ARGUMENT;
-        return result;
-    }
-
-    for(int i = 0; i < decompressedStrLen; i++) {
-        decompressedStr[i] = RLEListGet(list, i, &result);
-        if(!decompressedStr[i]) {
-            return result;
+//    char* decompressedStr = malloc(decompressedStrLen + 1);
+//
+//
+//    for(int i=0; i<decompressedStrLen; i++) {
+//        decompressedStr[i] = 0;
+//    }
+//
+//    if(decompressedStr == NULL) {
+//        result = RLE_LIST_NULL_ARGUMENT;
+//        return result;
+//    }
+//
+//    for(int i = 0; i < decompressedStrLen; i++) {
+//        decompressedStr[i] = RLEListGet(list, i, &result);
+//        if(!decompressedStr[i]) {
+//            return result;
+//        }
+//    }
+    char currentChar = 0;
+    for(int i = 0; i < decompressedStrLen && result == RLE_LIST_SUCCESS; i++) {
+        currentChar = RLEListGet(list, i, &result);
+        if(result == RLE_LIST_SUCCESS) {
+            fputc(currentChar, out_stream);
         }
     }
     
-    fprintf(out_stream, "%s", decompressedStr);
-    free(decompressedStr);
+//    fprintf(out_stream, "%s", decompressedStr);
+//    free(decompressedStr);
     return result;
 }
 
