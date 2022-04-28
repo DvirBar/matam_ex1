@@ -34,7 +34,11 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
    
     int decompressedStrLen = RLEListSize(list);
     char* decompressedStr = malloc(decompressedStrLen + 1);
-    strcpy(decompressedStr, "");
+    
+    
+    for(int i=0; i<decompressedStrLen; i++) {
+        decompressedStr[i] = 0;
+    }
     
     if(decompressedStr == NULL) {
         result = RLE_LIST_NULL_ARGUMENT;
