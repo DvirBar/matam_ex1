@@ -11,10 +11,14 @@ RLEList asciiArtRead(FILE* in_stream) {
     }
     
     RLEList compressedFile = RLEListCreate();
+
     char currentFileChar = 0;
-    // TODO: What if it fails?
-    while(fscanf(in_stream, "%c", &currentFileChar) != EOF) {
-        RLEListAppend(compressedFile, currentFileChar);
+
+    while(currentFileChar != EOF) {
+        currentFileChar = fgetc(in_stream);
+        if(currentFileChar > EOF) {
+            RLEListAppend(compressedFile, currentFileChar);
+        }
     }
 
     return compressedFile;
@@ -35,8 +39,6 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
         return result;
     }
 
-//    decompressedStr[decompressedStrLen] = '\0';
-//
     for(int i = 0; i < decompressedStrLen; i++) {
         decompressedStr[i] = RLEListGet(list, i, &result);
         if(!decompressedStr[i]) {

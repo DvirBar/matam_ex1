@@ -1,10 +1,3 @@
-//
-//  AsciiArtTool.h
-//  ex1_wet
-//
-//  Created by Dvir Bartov on 19/04/2022.
-//
-
 #ifndef ASCII_ART_TOOL_H
 #define ASCII_ART_TOOL_H
 
