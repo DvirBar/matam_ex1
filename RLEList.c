@@ -6,6 +6,7 @@
 #define STR_FORMAT_BASE_LEN 2
 #define NEW_LINE_ASCII '\n'
 #define ZERO_ASCII '0'
+#define DECIMAL_BASE 10
 
 struct RLEList_t {
     char value;
@@ -27,11 +28,11 @@ static int RLEListNodeNumber(RLEList list) {
 
 static int getNumDigits(int num) {
     int counter = 1;
-    int base = 10;
+    int base = DECIMAL_BASE;
     
     while(num/base) {
         counter++;
-        base*=base;
+        base*=DECIMAL_BASE;
     }
     
     return counter;
@@ -226,8 +227,8 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         
         return NULL;
     }
-
-    char* exportedString = malloc((getRLEStringLength(list)) + 1);
+    int listLen = getRLEStringLength(list);
+    char* exportedString = malloc(listLen + 1);
 
     if(!exportedString) {
         if (result) {
@@ -237,7 +238,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         return NULL;
     }
 
-    exportedString = strcpy(exportedString, "");
+    exportedString[listLen] = '\0';
     char* tmpStr = exportedString;
 
     RLEList tempList = list;
