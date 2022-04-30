@@ -6,7 +6,7 @@ RLELIST_H = /home/mtm/public/2122b/ex1/RLEList.h
 COMP_FLAG = -std=c99 -I/home/mtm/public/2122b/ex1 -Itool -Wall -pedantic-errors -Werror
 
 $(EXEC): $(OBJS)
-	$(CC) $(OBJS) $(COMP_FLAG) $(DEBUG_FLAG)  -o $(EXEC)
+	$(CC) $(OBJS) $(COMP_FLAG) $(DEBUG_FLAG) -o $(EXEC)
 	
 tool/main.o: tool/main.c $(RLELIST_H) tool/AsciiArtTool.h
 	$(CC) -c $(COMP_FLAG) $*.c -o tool/main.o

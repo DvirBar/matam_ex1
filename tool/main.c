@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #include "RLEList.h"
 #include "AsciiArtTool.h"
 
@@ -43,7 +44,6 @@ int main(int argc, char** argv) {
     }
 
     RLEList list = asciiArtRead(source);
-
     RLEListResult result = RLE_LIST_ERROR;
     
     if(flag == ENCODED_FLAG) {

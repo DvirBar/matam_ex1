@@ -1,32 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <string.h>
-#include <sys/time.h>
 
 #include "RLEList.h"
 #include "AsciiArtTool.h"
-
-#define BUFFER_SIZE 256
 
 
 RLEList asciiArtRead(FILE* in_stream) {
     if(!in_stream) {
         return NULL;
     }
+
+    // Create a dummy node
+    RLEList list = RLEListCreate();
+
+    char currentChar = fgetc(in_stream);
+    RLEListResult result = RLE_LIST_SUCCESS;
+
+    while(currentChar != EOF && result == RLE_LIST_SUCCESS) {
+        result = RLEListAppend(list, currentChar);
+        currentChar = fgetc(in_stream);
+    }
     
-    RLEList compressedFile = RLEListCreate();
-
-    char currentFileChar = 0;
-
-    while(currentFileChar != EOF) {
-        currentFileChar = fgetc(in_stream);
-        if(currentFileChar != EOF) {
-            RLEListAppend(compressedFile, currentFileChar);
-        }
+    if(result != RLE_LIST_SUCCESS) {
+        return NULL;
     }
 
-    return compressedFile;
+    return list;
 }
 
 RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
@@ -37,7 +37,6 @@ RLEListResult asciiArtPrint(RLEList list, FILE *out_stream) {
     RLEListResult result = RLE_LIST_SUCCESS;
     
     int strLen = RLEListSize(list);
-
     char currentChar = 0;
     for(int i = 0; i < strLen && result == RLE_LIST_SUCCESS; i++) {
         currentChar = RLEListGet(list, i, &result);

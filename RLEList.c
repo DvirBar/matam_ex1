@@ -1,6 +1,9 @@
-#include "RLEList.h"
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+
+#include "RLEList.h"
+
 
 #define UNDEFINED -1
 #define STR_FORMAT_BASE_LEN 2
@@ -62,7 +65,6 @@ static void RLENodeToString(RLEList list, char* outputStr) {
     }
 }
 
-
 RLEList RLEListCreate() {
     RLEList list = malloc(sizeof(*list));
     
@@ -97,14 +99,14 @@ RLEListResult RLEListAppend(RLEList list, char value) {
         tempList = tempList->next;
     }
     
-    if(!tempList->value || tempList->value == value) {
+    if(tempList->value && tempList->value == value) {
         tempList->value = value;
         tempList->num++;
         return RLE_LIST_SUCCESS;
     }
     
     RLEList newList = RLEListCreate();
-
+    
     if(!newList) {
         return RLE_LIST_OUT_OF_MEMORY;
     }
@@ -134,44 +136,42 @@ int RLEListSize(RLEList list) {
 }
 
 
-
 RLEListResult RLEListRemove(RLEList list, int index) {
     if(!list) {
         return RLE_LIST_NULL_ARGUMENT;
     }
-    
+
     if(index < 0 || index >= RLEListSize(list)) {
         return RLE_LIST_INDEX_OUT_OF_BOUNDS;
     }
-    
+
+    assert(!list->value);
+
     RLEList lastNode = list;
-    RLEList tempList = list;
-    
+    RLEList tempList = list->next;
+
     int lastNum = 0;
     for (int i = 0; i + tempList->num <= index; i += lastNum) {
         lastNode = tempList;
         lastNum = tempList->num;
         tempList = tempList->next;
     }
-    
+
     if(tempList->num == 1) {
-        if(index==0) {
-            if(list->next) {
-                list = list->next;
-            }
-        }
-        else if(lastNode->next) {
+        if(lastNode->next) {
             lastNode->next = tempList->next;
         }
-        
+
         free(tempList);
     }
     else {
         tempList->num--;
     }
-    
+
     return RLE_LIST_SUCCESS;
 }
+
+
 
 char RLEListGet(RLEList list, int index, RLEListResult *result) {
     if(!list) {
@@ -182,7 +182,7 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
         return 0;
     }
 
-    if((index < 0) || (index >= RLEListSize(list))) {
+    if(index < 0 || index >= RLEListSize(list)) {
         if(result) {
             *result = RLE_LIST_INDEX_OUT_OF_BOUNDS;
         }
@@ -227,6 +227,9 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         
         return NULL;
     }
+    
+    assert(!list->value);
+    
     int listLen = getRLEStringLength(list);
     char* exportedString = malloc(listLen + 1);
 
@@ -241,7 +244,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
     exportedString[listLen] = '\0';
     char* tmpStr = exportedString;
 
-    RLEList tempList = list;
+    RLEList tempList = list->next;
 
     while(tempList) {
         RLENodeToString(tempList, tmpStr);

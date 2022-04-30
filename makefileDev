@@ -1,21 +1,19 @@
 CC = gcc
-OBJS = tool/main.o RLEList.o tool/AsciiArtTool.o
+OBJS = main.o RLEList.o AsciiArtTool.o
 EXEC = AsciiArtTool
-DEBUG_FLAG = -g
-RLELIST_H = /Users/dvirbartov/Programming/university/introToSysProg/HW1/ex1_wet/ex1_wet/RLEList.h
-COMP_FLAG = -std=c99 -I$(RLELIST_H) -Itool -Wall -pedantic-errors -Werror
+COMP_FLAG = -std=c99 -Wall -pedantic-errors
 
 $(EXEC): $(OBJS)
-    $(CC) $(OBJS) $(COMP_FLAG) $(DEBUG_FLAG) -o $(EXEC)
-    
-tool/main.o: tool/main.c $(RLELIST_H) tool/AsciiArtTool.h
-    $(CC) -c $(COMP_FLAG) $*.c -o tool/main.o
-    
-tool/AsciiArtTool.o: tool/AsciiArtTool.c $(RLELIST_H) tool/AsciiArtTool.h
-    $(CC) -c $(COMP_FLAG) $*.c -o tool/AsciiArtTool.o
+	$(CC) $(OBJS) $(COMP_FLAG) -o $(EXEC)
 
-RLEList.o: RLEList.c $(RLELIST_H)
-    $(CC) -c $(COMP_FLAG) $*.c
-    
+main.o: main.c RLEList.h AsciiArtTool.h
+	$(CC) -c $(COMP_FLAG) $*.c
+
+AsciiArtTool.o: AsciiArtTool.c RLEList.h AsciiArtTool.h
+	$(CC) -c $(COMP_FLAG) $*.c
+
+RLEList.o: RLEList.c RLEList.h
+	$(CC) -c $(COMP_FLAG) $*.c
+
 clean:
-    rm -f $(OBJS) $(EXEC)
+	rm -f $(OBJS) $(EXEC)

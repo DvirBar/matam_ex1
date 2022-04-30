@@ -1,8 +1,10 @@
 .DS_Store
-tests/output.txt
+.idea
+tests
 RLEUnitTests
 makefileRLEUnitTests
 InOutFiles
 MakefileTest
 tester.sh
 testerFast.sh
+*.o
