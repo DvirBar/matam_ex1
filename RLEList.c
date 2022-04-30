@@ -66,6 +66,15 @@ static void RLENodeToString(RLEList list, char* outputStr) {
     }
 }
 
+static void compressDoubleAppearnaces(RLEList lastNode, RLEList currentNode) {
+    assert(lastNode);
+    assert(currentNode);
+    
+    lastNode->num += currentNode->num;
+    lastNode->next = currentNode->next;
+    free(currentNode);
+}
+
 RLEList RLEListCreate() {
     RLEList list = malloc(sizeof(*list));
     
@@ -161,6 +170,11 @@ RLEListResult RLEListRemove(RLEList list, int index) {
     if(tempList->num == 1) {
         lastNode->next = tempList->next;
         free(tempList);
+        
+        tempList = lastNode->next;
+        if(tempList && lastNode->value == tempList->value) {
+            compressDoubleAppearnaces(lastNode, tempList);
+        }
     }
     else {
         tempList->num--;
@@ -215,9 +229,7 @@ RLEListResult RLEListMap(RLEList list, MapFunction map_function) {
         mappedValue = map_function(tempList->value);
         
         if(lastNode->value == mappedValue) {
-            lastNode->num += tempList->num;
-            lastNode->next = tempList->next;
-            free(tempList);
+            compressDoubleAppearnaces(lastNode, tempList);
         }
         else {
             tempList->value = mappedValue;
