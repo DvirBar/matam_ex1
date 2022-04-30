@@ -26,7 +26,6 @@ static int RLEListNodeNumber(RLEList list) {
         nodesInList++;
         tempList = tempList->next;
     }
-    
     return nodesInList;
 }
 
@@ -44,7 +43,7 @@ static int getNumDigits(int num) {
 
 static int getRLEStringLength(RLEList list) {
     int RLEStrLength = (RLEListNodeNumber(list) * STR_FORMAT_BASE_LEN);
-    RLEList tmpList = list;
+    RLEList tmpList = list->next;
     while (tmpList) {
         RLEStrLength += getNumDigits(tmpList->num);
         tmpList = tmpList->next;
@@ -232,6 +231,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
     assert(!list->value);
     
     int listLen = getRLEStringLength(list);
+    printf("%d\n", listLen);
     char* exportedString = malloc(listLen + 1);
 
     if(!exportedString) {
