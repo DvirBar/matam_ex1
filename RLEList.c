@@ -19,13 +19,14 @@ struct RLEList_t {
 
 static int RLEListNodeNumber(RLEList list) {
     int nodesInList = 0;
-    RLEList temporaryList = list;
 
-    while(temporaryList) {
+    RLEList tempList = list->next;
+
+    while(tempList) {
         nodesInList++;
-        temporaryList = temporaryList->next;
+        tempList = tempList->next;
     }
-
+    
     return nodesInList;
 }
 
@@ -227,7 +228,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         
         return NULL;
     }
-    
+
     assert(!list->value);
     
     int listLen = getRLEStringLength(list);
@@ -243,7 +244,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
 
     exportedString[listLen] = '\0';
     char* tmpStr = exportedString;
-
+    
     RLEList tempList = list->next;
 
     while(tempList) {
