@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     }
     else {
         result = RLEListMap(list, mapSpaceAt);
-
+    
         if(result == RLE_LIST_SUCCESS) {
             result = asciiArtPrint(list, target);
         }

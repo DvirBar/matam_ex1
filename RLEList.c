@@ -8,6 +8,7 @@
 #define UNDEFINED -1
 #define STR_FORMAT_BASE_LEN 2
 #define NEW_LINE_ASCII '\n'
+#define NULL_TERMINATION '\0'
 #define ZERO_ASCII '0'
 #define DECIMAL_BASE 10
 
@@ -20,7 +21,7 @@ struct RLEList_t {
 static int RLEListNodeNumber(RLEList list) {
     int nodesInList = 0;
 
-    RLEList tempList = list->next;
+    RLEList tempList = list;
 
     while(tempList) {
         nodesInList++;
@@ -43,7 +44,7 @@ static int getNumDigits(int num) {
 
 static int getRLEStringLength(RLEList list) {
     int RLEStrLength = (RLEListNodeNumber(list) * STR_FORMAT_BASE_LEN);
-    RLEList tmpList = list->next;
+    RLEList tmpList = list;
     while (tmpList) {
         RLEStrLength += getNumDigits(tmpList->num);
         tmpList = tmpList->next;
@@ -158,10 +159,7 @@ RLEListResult RLEListRemove(RLEList list, int index) {
     }
 
     if(tempList->num == 1) {
-        if(lastNode->next) {
-            lastNode->next = tempList->next;
-        }
-
+        lastNode->next = tempList->next;
         free(tempList);
     }
     else {
@@ -209,13 +207,26 @@ RLEListResult RLEListMap(RLEList list, MapFunction map_function) {
         return RLE_LIST_NULL_ARGUMENT;
     }
     
-    RLEList tempList = list;
+    RLEList tempList = list->next;
+    RLEList lastNode = list;
+    char mappedValue = 0;
     
     while(tempList) {
-        tempList->value = map_function(tempList->value);
-        tempList = tempList->next;
+        mappedValue = map_function(tempList->value);
+        
+        if(lastNode->value == mappedValue) {
+            lastNode->num += tempList->num;
+            lastNode->next = tempList->next;
+            free(tempList);
+        }
+        else {
+            tempList->value = mappedValue;
+            lastNode = tempList;
+        }
+        
+        tempList = lastNode->next;
     }
-    
+  
     return RLE_LIST_SUCCESS;
 }
 
@@ -230,10 +241,11 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
 
     assert(!list->value);
     
-    int listLen = getRLEStringLength(list);
-    printf("%d\n", listLen);
+    RLEList tempList = list->next;
+    
+    int listLen = getRLEStringLength(tempList);
     char* exportedString = malloc(listLen + 1);
-
+    
     if(!exportedString) {
         if (result) {
             *result = RLE_LIST_OUT_OF_MEMORY;
@@ -242,10 +254,10 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
         return NULL;
     }
 
-    exportedString[listLen] = '\0';
+    exportedString[listLen] = NULL_TERMINATION;
     char* tmpStr = exportedString;
     
-    RLEList tempList = list->next;
+    
 
     while(tempList) {
         RLENodeToString(tempList, tmpStr);
