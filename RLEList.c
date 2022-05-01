@@ -14,7 +14,7 @@
 
 struct RLEList_t {
     char value;
-    int num;
+    int len;
     struct RLEList_t* next;
 };
 
@@ -46,31 +46,30 @@ static int getRLEStringLength(RLEList list) {
     int RLEStrLength = (RLEListNodeNumber(list) * STR_FORMAT_BASE_LEN);
     RLEList tmpList = list;
     while (tmpList) {
-        RLEStrLength += getNumDigits(tmpList->num);
+        RLEStrLength += getNumDigits(tmpList->len);
         tmpList = tmpList->next;
     }
     return RLEStrLength;
 }
 
 static void RLENodeToString(RLEList list, char* outputStr) {
-    int nodeNumOfDigits = getNumDigits(list->num);
+    int nodeNumOfDigits = getNumDigits(list->len);
     int strSize = nodeNumOfDigits + STR_FORMAT_BASE_LEN;
     outputStr[0] = list->value;
     outputStr[strSize - 1] = NEW_LINE_ASCII;
-    int nodeCurrentDigit = list->num;
+    int nodeCurrentDigit = list->len;
 
-    for (int i = 1; i <= nodeNumOfDigits; i++)
-    {
-        outputStr[strSize - 1 - i] = (nodeCurrentDigit % 10) + ZERO_ASCII;
-        nodeCurrentDigit /= 10;
+    for (int i = 1; i <= nodeNumOfDigits; i++) {
+        outputStr[strSize - 1 - i] = (nodeCurrentDigit % DECIMAL_BASE) + ZERO_ASCII;
+        nodeCurrentDigit /= DECIMAL_BASE;
     }
 }
 
-static void compressDoubleAppearnaces(RLEList lastNode, RLEList currentNode) {
+static void compressDoubleAppearances(RLEList lastNode, RLEList currentNode) {
     assert(lastNode);
     assert(currentNode);
     
-    lastNode->num += currentNode->num;
+    lastNode->len += currentNode->len;
     lastNode->next = currentNode->next;
     free(currentNode);
 }
@@ -83,7 +82,7 @@ RLEList RLEListCreate() {
     }
     
     list->value = 0;
-    list->num = 0;
+    list->len = 0;
     list->next = NULL;
     
     return list;
@@ -111,7 +110,7 @@ RLEListResult RLEListAppend(RLEList list, char value) {
     
     if(tempList->value && tempList->value == value) {
         tempList->value = value;
-        tempList->num++;
+        tempList->len++;
         return RLE_LIST_SUCCESS;
     }
     
@@ -122,7 +121,7 @@ RLEListResult RLEListAppend(RLEList list, char value) {
     }
     
     newList->value = value;
-    newList->num = 1;
+    newList->len = 1;
     newList->next = NULL;
     tempList->next = newList;
     
@@ -138,7 +137,7 @@ int RLEListSize(RLEList list) {
     int listCharacterNumber = 0;
 
     while (tempList) {
-        listCharacterNumber += tempList->num;
+        listCharacterNumber += tempList->len;
         tempList = tempList->next;
     }
 
@@ -161,23 +160,23 @@ RLEListResult RLEListRemove(RLEList list, int index) {
     RLEList tempList = list->next;
 
     int lastNum = 0;
-    for (int i = 0; i + tempList->num <= index; i += lastNum) {
+    for (int i = 0; i + tempList->len <= index; i += lastNum) {
         lastNode = tempList;
-        lastNum = tempList->num;
+        lastNum = tempList->len;
         tempList = tempList->next;
     }
 
-    if(tempList->num == 1) {
+    if(tempList->len == 1) {
         lastNode->next = tempList->next;
         free(tempList);
         
         tempList = lastNode->next;
         if(tempList && lastNode->value == tempList->value) {
-            compressDoubleAppearnaces(lastNode, tempList);
+            compressDoubleAppearances(lastNode, tempList);
         }
     }
     else {
-        tempList->num--;
+        tempList->len--;
     }
 
     return RLE_LIST_SUCCESS;
@@ -204,8 +203,8 @@ char RLEListGet(RLEList list, int index, RLEListResult *result) {
 
     RLEList tempList = list;
     int lastNum = 0;
-    for (int i = 0; i + tempList->num <= index; i += lastNum) {
-        lastNum = tempList->num;
+    for (int i = 0; i + tempList->len <= index; i += lastNum) {
+        lastNum = tempList->len;
         tempList = tempList->next;
     }
     
@@ -229,7 +228,7 @@ RLEListResult RLEListMap(RLEList list, MapFunction map_function) {
         mappedValue = map_function(tempList->value);
         
         if(lastNode->value == mappedValue) {
-            compressDoubleAppearnaces(lastNode, tempList);
+            compressDoubleAppearances(lastNode, tempList);
         }
         else {
             tempList->value = mappedValue;
@@ -273,7 +272,7 @@ char* RLEListExportToString(RLEList list, RLEListResult* result) {
 
     while(tempList) {
         RLENodeToString(tempList, tmpStr);
-        tmpStr += getNumDigits(tempList->num) + STR_FORMAT_BASE_LEN;
+        tmpStr += getNumDigits(tempList->len) + STR_FORMAT_BASE_LEN;
         tempList = tempList->next;
     }
 
