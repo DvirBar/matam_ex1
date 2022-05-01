@@ -13,7 +13,7 @@ RLEList asciiArtRead(FILE* in_stream) {
 
     // Create a dummy node
     RLEList list = RLEListCreate();
-
+    
     char currentChar = fgetc(in_stream);
     RLEListResult result = RLE_LIST_SUCCESS;
 

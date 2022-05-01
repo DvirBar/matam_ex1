@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     RLEListResult result = RLE_LIST_ERROR;
     
     if(flag == ENCODED_FLAG) {
-        result = asciiArtPrintEncoded(list, target);
+        asciiArtPrintEncoded(list, target);
     }
     else {
         result = RLEListMap(list, mapSpaceAt);
@@ -63,6 +63,6 @@ int main(int argc, char** argv) {
     fclose(source);
     fclose(target);
 
-    return result;
+    return 0;
 }
 
